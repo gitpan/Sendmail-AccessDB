@@ -6,19 +6,13 @@ use strict;
 BEGIN {
 	use Exporter ();
 	use vars qw ($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $regex_lock);
-	$VERSION     = 0.02;
+	$VERSION     = 0.03;
 	@ISA         = qw (Exporter);
 	#Give a hoot don't pollute, do not export more than needed by default
 	@EXPORT      = qw ();
 	@EXPORT_OK   = qw (spam_friend whitelisted);
 	%EXPORT_TAGS = ();
 }
-
-
-
-
-########################################### main pod documentation begin ##
-# Below is the stub of documentation for your module. You better edit it!
 
 =head1 NAME
 
@@ -96,11 +90,6 @@ Each public function/method is described here.
 These are how you should interact with this module.
 
 =cut
-
-############################################# main pod documentation end ##
-
-
-# Public methods and functions go here. 
 
 
 =head2 spam_friend
@@ -180,7 +169,7 @@ sub whitelisted
         lock $regex_lock;
         if ($address =~ /^(.*)\@(.*)/)
         {
-            my ($left,$right) = $address =~ /^(.*)\@(.*)/;
+            my ($left,$right) = $address =~ /^(.*\@)(.*)/;
             push @to_check, ("$left") if defined $left;
             push @to_check, ("$right") if defined $right;
 	    $RHS = $right if defined $right;
@@ -199,7 +188,6 @@ sub whitelisted
         {
             while (my ($shorter) = $address =~ /^[\w\-]+\.(.*)$/)
             {
-#               print "pushing '$shorter'\n";
                 push @to_check, $shorter;
                 $address = $shorter;
             }
@@ -208,7 +196,6 @@ sub whitelisted
 	{
             while (my ($shorter) = $RHS =~ /^[\w\-]+\.(.*)$/)
             {
-#               print "pushing '$shorter'\n";
                 push @to_check, $shorter;
                 $RHS = $shorter;
             }
@@ -233,8 +220,6 @@ sub whitelisted
 
 
 
-########################################### main pod documentation begin ##
-
 =head1 PRIVATE METHODS
 
 Each private function/method is described here.
@@ -246,7 +231,6 @@ interface and are described here for documentation purposes only.
 
 =cut
 
-############################################# main pod documentation end ##
 
 1; #this line is important and will help the module return a true value
 __END__

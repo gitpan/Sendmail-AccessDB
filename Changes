@@ -1,5 +1,13 @@
 Revision history for Perl extension Sendmail::AccessDB.
 
+0.03  Fri Aug 17 16:46:00 2001
+        - Per the sendmail folks, whitelisting lookups now check LHS@ 
+          in the DB instead of LHS.
+
+0.02  Fri Aug 17 14:39:00 2001
+        - Fixed whitelisting bug where the RHS of an email address wasn't
+          scanned to see if parent domains were whitelisted.
+
 0.01  Sun Aug 12 15:55:28 2001
 	- original version; created by ExtUtils::ModuleMaker 0.20102
 
