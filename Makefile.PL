@@ -5,5 +5,6 @@ WriteMakefile(
     NAME         => 'Sendmail::AccessDB',
     VERSION_FROM => 'lib/Sendmail/AccessDB.pm', # finds $VERSION
     AUTHOR       => 'Derek J. Balling (dredd@megacity.org)',
-    ABSTRACT     => 'An interface to Sendmail access.db'
+    ABSTRACT     => 'An interface to Sendmail access.db',
+    clean        => {FILES => "t/test.db" }
 );

@@ -1,6 +1,7 @@
 
 package Sendmail::AccessDB;
-use DB_File;
+#use DB_File;
+use BerkeleyDB;
 use strict;
 use Carp;
 
@@ -8,7 +9,7 @@ BEGIN {
 	use Exporter ();
 	use vars qw ($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS 
 		     $sub_regex_lock $DB_FILE);
-	$VERSION     = 0.07;
+	$VERSION     = 0.08;
 	@ISA         = qw (Exporter);
 	@EXPORT      = qw ();
 	@EXPORT_OK   = qw (spam_friend whitelisted lookup);
@@ -159,7 +160,8 @@ sub spam_friend
 
  Usage     : whitelisted($value)
  Purpose   : Determine if an e-mail address, hostname, or IP address is
-             explicitly whitelisted
+             explicitly whitelisted, in that it contains an "OK" or "RELAY"
+             value in the database.
  Returns   : 0/1, true or false as to whether the argument is whitelisted
  Argument  : Either an email-address (e.g., foo@example.com), an IP address
              (e.g., 10.200.1.230), or a hostname (e.g., mailhost.example.com)
@@ -194,7 +196,9 @@ sub whitelisted
         }
     }
     my $lookup = lookup($address,%args);
-    return ( (defined $lookup) and ($lookup eq 'OK') ) ? 1 : 0;
+    return ( (defined $lookup) and 
+	     ( ($lookup eq 'OK') or ($lookup eq 'RELAY') )
+	     ) ? 1 : 0;
 }
 
 =head2 lookup
@@ -246,15 +250,17 @@ sub lookup
 	@check_list = ($address);
     }
 
-    my %access;  my $rc;
+    my %access;
 
     my $filename = $DB_FILE;
     if (defined $args{'file'})
     {
 	$filename = $args{'file'};
     }
-
-    tie %access, 'DB_File', $filename , O_RDONLY or croak "Couldn't open $filename : $!";
+    my $db  = tie %access, 'BerkeleyDB::Hash', 
+                -Flags => DB_RDONLY,
+                -Filename => $filename
+             or die "Cannot open file $filename: $! $BerkeleyDB::Error\n";
 
     foreach my $key (@check_list)
     {	
@@ -265,15 +271,20 @@ sub lookup
 	    $lookup = "$args{'qualifier'}:$lookup";
 	}
 	$lookup = lc $lookup;
-#	print "looking up '$lookup'\n";
+
+#	print STDERR "looking up '$lookup'\n";
+
 	if ($access{$lookup})
 	{
-	    return $access{$lookup};
+	    my $local_rc = $access{$lookup};
+#	    untie %access;
+#	    print STDERR "Returning $local_rc\n";
+	    return $local_rc;
 	}
     }
 
-    untie %access;
-    return $rc;
+#    untie %access;
+    return undef;
 }
     
 

@@ -9,9 +9,8 @@ my($test) = 1;
 use Sendmail::AccessDB;
 my $foo;
 
-$Sendmail::AccessDB::DB_FILE="./test.db";
 $Sendmail::AccessDB::DB_FILE="./t/test.db";
-
+system("/usr/sbin/makemap hash ./t/test < ./t/test");
 
 
 my $friend = Sendmail::AccessDB::spam_friend('foo@bar.com');

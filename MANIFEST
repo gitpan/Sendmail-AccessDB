@@ -7,5 +7,5 @@ t/01_ini.t
 t/02_expand.t
 t/03_functions.t
 t/test
-t/test.db
 MANIFEST
+META.yml                                 Module meta-data (added by MakeMaker)
