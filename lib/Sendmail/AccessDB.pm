@@ -6,9 +6,9 @@ use Carp;
 
 BEGIN {
 	use Exporter ();
-	use vars qw ($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $regex_lock
-		     $DB_FILE);
-	$VERSION     = 0.04;
+	use vars qw ($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS 
+		     $sub_regex_lock $DB_FILE);
+	$VERSION     = 0.05;
 	@ISA         = qw (Exporter);
 	@EXPORT      = qw ();
 	@EXPORT_OK   = qw (spam_friend whitelisted lookup);
@@ -269,10 +269,11 @@ sub lookup
     
 
 
-sub _expand_ip
+sub _expand_ip : locked
 {
     my $address = shift;
     my @expanded = ();
+    
     if ($address =~ /^(?:\d+\.){3}\d+/)
     {
 	push @expanded, $address;

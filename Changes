@@ -1,5 +1,9 @@
 Revision history for Perl extension Sendmail::AccessDB.
 
+0.05  Tue Aug 28
+        - Fixed bug where one of the _expand_* private calls was not 
+          threadsafe.
+
 0.04  Sun Aug 19
         - Made a generic "lookup" routine, which will return the value of 
           in the DB. 
