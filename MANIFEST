@@ -1,0 +1,7 @@
+LICENSE
+Changes
+Makefile.PL
+README
+lib/Sendmail/AccessDB.pm
+t/01_ini.t
+MANIFEST
