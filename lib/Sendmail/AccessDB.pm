@@ -9,7 +9,7 @@ BEGIN {
 	use Exporter ();
 	use vars qw ($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS 
 		     $sub_regex_lock $DB_FILE);
-	$VERSION     = 0.08;
+	$VERSION     = 0.09;
 	@ISA         = qw (Exporter);
 	@EXPORT      = qw ();
 	@EXPORT_OK   = qw (spam_friend whitelisted lookup);

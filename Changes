@@ -1,5 +1,8 @@
 Revision history for Perl extension Sendmail::AccessDB.
 
+0.09  Sun May 02 2004
+        - added PREREQ_PM to Makefile.PL
+
 0.08  Sun May 02 2004
 	- Changed whitelisted() function to also check for RELAY since
 	  according to the sendmail spec, RELAY implies OK.

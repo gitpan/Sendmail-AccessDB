@@ -6,5 +6,8 @@ WriteMakefile(
     VERSION_FROM => 'lib/Sendmail/AccessDB.pm', # finds $VERSION
     AUTHOR       => 'Derek J. Balling (dredd@megacity.org)',
     ABSTRACT     => 'An interface to Sendmail access.db',
+    PREREQ_PM   => {
+	'BerkeleyDB'=> '0'
+    },
     clean        => {FILES => "t/test.db" }
 );
