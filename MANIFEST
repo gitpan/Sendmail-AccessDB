@@ -4,4 +4,8 @@ Makefile.PL
 README
 lib/Sendmail/AccessDB.pm
 t/01_ini.t
+t/02_expand.t
+t/03_functions.t
+t/test
+t/test.db
 MANIFEST

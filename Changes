@@ -1,5 +1,17 @@
 Revision history for Perl extension Sendmail::AccessDB.
 
+0.04  Sun Aug 19
+        - Made a generic "lookup" routine, which will return the value of 
+          in the DB. 
+        - genericised some private function calls for the purpose of finding
+          parent lookups for email addresses, ip addresses, hostnames, etc.
+        - Made the lookup and whitelisted routines take a 'qualifier' argument
+          (e.g., the "Spam" in "Spam:lookup"), as well as to add a 'type'
+          argument, where a particular lookup-expansion type (previous change)
+          is desired. (e.g., doing a lookup on 'postmaster' is ambiguous, as it
+          could be both a hostname and a recipient or sender, and the method
+          of determining "parent lookups" for each is different.
+
 0.03  Fri Aug 17 16:46:00 2001
         - Per the sendmail folks, whitelisting lookups now check LHS@ 
           in the DB instead of LHS.

@@ -24,8 +24,10 @@ USAGE
     to enable specific checks, for example, if you wanted to customize down
     to a per-check basis, you might use:
 
-     $rbl_friend_or_hater = spam_friend('user@example.com','maps_rbl'); 
-     $dul_friend_or_hater = spam_friend('user@example.com','maps_dul'); 
+     $rbl_friend_or_hater = spam_friend('user@example.com',
+                                        'qualifier' => 'maps_rbl'); 
+     $dul_friend_or_hater = spam_friend('user@example.com',
+                                        'qualifier' => 'maps_dul'); 
 
     Caution should be taken when defining your own categories, as they may
     inadvertantly conflict with Sendmail-defined categories.
@@ -35,7 +37,45 @@ USAGE
      $whitelisted_host = whitelisted('foo.example.com');
      $whitelisted_addr = whitelisted('192.168.1.123');
 
-    Would check for appropriate whitelisting entries in access.db.
+    Would check for appropriate whitelisting entries in access.db. Some
+    lookups might be ambiguous, for example:
+
+     $whitelisted = whitelisted('foobar');
+
+    where it is hard to know if that is supposed to be a hostname, or a
+    sender. whitelisted() accepts the 'type' argument, such as:
+
+     $whitelisted = whitelisted('foobar','type'=>'hostname');
+     $whitelisted = whitelisted('postmaster','type'=>'mail');
+
+    It's also possible to feed the qualifier argument, if necessary, for
+    example, to do:
+
+     $whitelisted = whitelisted('host.example.com','type'=>'hostname',
+                                'qualifier' => 'Connect');
+
+    which would check to see if this host has an OK flag set for the Connect
+    qualifier.
+
+    There is also the generic "lookup", which, at its simplest, takes a
+    single argument:
+
+     $rc = lookup('host.example.com');
+
+    will do a lookup on host.example.com. But if you wanted to pay attention
+    to parent-domains, you might do:
+
+     $rc = lookup('host.example.com', 'type'=>'hostname');
+
+    but if you wanted to find out if 'host.example.com', or any of its
+    parent domains ('example.com' and 'com'), had a value in the "MyQual"
+    qualifier, you might do:
+
+     $rc = lookup('host.example.com','type'=>'hostname','qualifier'=>'MyQual');
+
+    which would look up, in order 'MyQual:host.example.com',
+    'MyQual:example.com', and 'MyQual:com', returning the first (most
+    specific) one found.
 
 BUGS
     None that I've found yet, but I'm sure they're there.
@@ -66,11 +106,12 @@ PUBLIC METHODS
 
   spam_friend
 
-     Usage     : $friend_or_hater = spam_friend($recipient,[$category])
+     Usage     : $friend_or_hater = spam_friend($recipient,
+                                                ['qualifier' => $category])
      Purpose   : Consults the /etc/mail/access.db to check for spamfriendliness
-     Returns   : 'friend','hater', or undef (which would mean default 
+     Returns   : 'FRIEND','HATER', or undef (which would mean default 
                  behavior for that site)
-     Argument  : The recipient e-mail address and an optional category if
+     Argument  : The recipient e-mail address and an optional qualifier if
                  the default of 'Spam' is not desired. 
      Throws    : 
      Comments  : 
@@ -84,9 +125,31 @@ PUBLIC METHODS
      Returns   : 0/1, true or false as to whether the argument is whitelisted
      Argument  : Either an email-address (e.g., foo@example.com), an IP address
                  (e.g., 10.200.1.230), or a hostname (e.g., mailhost.example.com)
-     Throws    : Nothing at present.
-     Comments  : This is pretty new, use at your own risk :)
+                 as well as 'type' and 'qualifer' arguments (see lookup for greater
+                 detail)
+     Throws    : 
+     Comments  : The code makes a pretty good attempt to figure out what type
+                 of argument $value is, but it can be overriden using the 'type'
+                 qualifier.
     See Also   : 
+
+  lookup
+
+     Usage     : lookup ($lookup_key, [ 'type'=>{'mail','ip','hostname'} ,
+                                        'qualifier'=>'qualifier' ])
+     Purpose   : Do a generic lookup on a $lookup_key in the access.db and
+                 return the value found (or undef if not)
+     Returns   : value in access.db or undef if not found
+     Argument  : $lookup_key - mandatory. 'type'=>mail/ip/hostname will cause
+                 lookups against all necessary lookups according to sendmail logic
+                 (for things like hostname lookups where subdomains inherit 
+                 attributes of parent domains, etc.), 'qualifier'=>$q, where $q 
+                 will be preprended to the beginning of all lookups, (e.g., $q =
+                 'Spam', lookup would be against 'Spam:lookup_value')
+     Throws    : 
+     Comments  : If not using 'type', the 'qualifier' field can be mimicked by 
+                 simply looking for 'Qualifier:lookup'.
+     See Also  : 
 
 PRIVATE METHODS
     Each private function/method is described here. These methods and
@@ -94,5 +157,17 @@ PRIVATE METHODS
     this module. They are not considered part of the public interface and
     are described here for documentation purposes only.
 
-    (none)
+  _expand_ip
+=head2 _expand_hostname
+=head2 _expand_address
+
+     Usage     : @expanded = _expand_ip($ip); # For example
+     Returns   : Given an ip, hostname, or e-mail address, it will expand
+                 that into the "appropriate lookups" which sendmail would use
+                 (e.g., given '192.168.1.2', _expand_ip would return
+                 192.168.1.2, 192.168.1, 192.168, and 192)
+     Argument  : The IP Address, hostname, or e-mail address to expand
+     Throws    : 
+     Comments  : 
+     See Also  : 
 
