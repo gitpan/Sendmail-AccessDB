@@ -8,7 +8,7 @@ BEGIN {
 	use Exporter ();
 	use vars qw ($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS 
 		     $sub_regex_lock $DB_FILE);
-	$VERSION     = 0.05;
+	$VERSION     = 0.07;
 	@ISA         = qw (Exporter);
 	@EXPORT      = qw ();
 	@EXPORT_OK   = qw (spam_friend whitelisted lookup);
@@ -199,8 +199,11 @@ sub whitelisted
 
 =head2 lookup
 
- Usage     : lookup ($lookup_key, [ 'type'=>{'mail','ip','hostname'} ,
-                                    'qualifier'=>'qualifier' ])
+ Usage     : lookup ($lookup_key, 
+		     'type'=>{'mail','ip','hostname'} ,   [optional]
+		     'qualifier'=>'qualifier'             [optional]
+		     'file'=>'filename'                   [optional]
+		     )
  Purpose   : Do a generic lookup on a $lookup_key in the access.db and
              return the value found (or undef if not)
  Returns   : value in access.db or undef if not found
@@ -245,7 +248,13 @@ sub lookup
 
     my %access;  my $rc;
 
-    tie %access, 'DB_File', $DB_FILE , O_RDONLY or croak "Couldn't open $DB_FILE : $!";
+    my $filename = $DB_FILE;
+    if (defined $args{'file'})
+    {
+	$filename = $args{'file'};
+    }
+
+    tie %access, 'DB_File', $filename , O_RDONLY or croak "Couldn't open $filename : $!";
 
     foreach my $key (@check_list)
     {	
