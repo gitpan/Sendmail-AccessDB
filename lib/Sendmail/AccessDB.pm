@@ -6,7 +6,7 @@ use strict;
 BEGIN {
 	use Exporter ();
 	use vars qw ($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $regex_lock);
-	$VERSION     = 0.01;
+	$VERSION     = 0.02;
 	@ISA         = qw (Exporter);
 	#Give a hoot don't pollute, do not export more than needed by default
 	@EXPORT      = qw ();
@@ -175,6 +175,7 @@ sub whitelisted
     tie %access, 'DB_File', "/etc/mail/access.db";
     
     my @to_check = ($address);
+    my $RHS;
     {
         lock $regex_lock;
         if ($address =~ /^(.*)\@(.*)/)
@@ -182,6 +183,7 @@ sub whitelisted
             my ($left,$right) = $address =~ /^(.*)\@(.*)/;
             push @to_check, ("$left") if defined $left;
             push @to_check, ("$right") if defined $right;
+	    $RHS = $right if defined $right;
         }
         elsif ($address =~ /^(?:\d+\.){3}\d+/)
         {
@@ -202,6 +204,15 @@ sub whitelisted
                 $address = $shorter;
             }
         }
+	if (defined $RHS)
+	{
+            while (my ($shorter) = $RHS =~ /^[\w\-]+\.(.*)$/)
+            {
+#               print "pushing '$shorter'\n";
+                push @to_check, $shorter;
+                $RHS = $shorter;
+            }
+	}	    
     }
     my $ok = 0;
     foreach my $dirty_check_me (@to_check)
