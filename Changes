@@ -1,5 +1,9 @@
 Revision history for Perl extension Sendmail::AccessDB.
 
+1.01  Tue Nov 10 2009
+	- Fixed a permissions issue where a test file didn't exist prior
+	  to testing.
+
 0.09  Sun May 02 2004
         - added PREREQ_PM to Makefile.PL
 

@@ -10,6 +10,7 @@ use Sendmail::AccessDB;
 my $foo;
 
 $Sendmail::AccessDB::DB_FILE="./t/test.db";
+system("touch ./t/test.db");
 system("/usr/sbin/makemap hash ./t/test < ./t/test");
 
 
