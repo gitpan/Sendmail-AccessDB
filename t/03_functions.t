@@ -1,7 +1,7 @@
 # t/03_functions.t; test the basic functions
 
 $|++; 
-print "1..5
+print "1..7
 ";
 my($test) = 1;
 
@@ -18,6 +18,12 @@ my $friend = Sendmail::AccessDB::spam_friend('foo@bar.com');
 if ( (defined $friend) and ($friend eq 'FRIEND')) 
   { print "ok $test\n";}else{ print "not ok $test\n"; }
 $test++;
+
+$friend = Sendmail::AccessDB::spam_friend('foo@bar.de');
+if ( (defined $friend) and ($friend eq 'FOE'))
+  { print "ok $test\n";}else{ print "not ok $test\n"; }
+$test++;
+
 
 my $whitelisted = Sendmail::AccessDB::whitelisted('foo.test.example.com','type'=>'hostname');
 if ( (defined $whitelisted) and ($whitelisted))
@@ -36,6 +42,12 @@ $test++;
 my $wltwo = Sendmail::AccessDB::whitelisted('user@foo.bar.tld','qualifier'=>'Qual','type'=>'mail');
 if ($wltwo) { print "ok $test\n" } else { print "not ok $test\n"; };
 $test++;
+
+my $should_be_skip = Sendmail::AccessDB::lookup('user@foo.bar.tld2','qualifier'=>'Qual','type'=>'mail');
+if ($should_be_skip eq "SKIP") { print "ok $test\n" } else { print "not ok $test\n"; };
+$test++;
+
+
 
 # end of t/03_functions.t
 

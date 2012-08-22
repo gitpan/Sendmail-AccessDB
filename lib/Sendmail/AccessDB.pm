@@ -9,7 +9,7 @@ BEGIN {
 	use Exporter ();
 	use vars qw ($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS 
 		     $sub_regex_lock $DB_FILE);
-	$VERSION     = 1.01;
+	$VERSION     = 1.02;
 	@ISA         = qw (Exporter);
 	@EXPORT      = qw ();
 	@EXPORT_OK   = qw (spam_friend whitelisted lookup);
@@ -250,6 +250,8 @@ sub lookup
 	@check_list = ($address);
     }
 
+    push(@check_list, '');
+
     my %access;
 
     my $filename = $DB_FILE;
@@ -261,6 +263,7 @@ sub lookup
                 -Flags => DB_RDONLY,
                 -Filename => $filename
              or die "Cannot open file $filename: $! $BerkeleyDB::Error\n";
+
 
     foreach my $key (@check_list)
     {	
