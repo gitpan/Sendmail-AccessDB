@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Sendmail-AccessDB
-version:            1.01
+version:            1.03
 abstract:           An interface to Sendmail access.db
 author:
     - Derek J. Balling (dredd@megacity.org)
