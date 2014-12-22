@@ -1,5 +1,11 @@
 Revision history for Perl extension Sendmail::AccessDB.
 
+1.04  Mon Dec 22 2014
+	- Removed the locked sub attributes because they seem to have no gain(no object acces/modification is done)
+	- Enhanced the POD
+	- Enhanced the test so they skip if /usr/sbin/makemap is not installed(might be needed to bundle a .db again)
+	- In 2012: Enhanced the lookup function so it does correctly check all variations of an email address
+
 1.01  Tue Nov 10 2009
 	- Fixed a permissions issue where a test file didn't exist prior
 	  to testing.

@@ -1,8 +1,18 @@
 # t/03_functions.t; test the basic functions
 
 $|++; 
-print "1..7
+if(-e "/usr/sbin/makemap" && -f "/usr/sbin/makemap" && -x "/usr/sbin/makemap")
+{
+	print "1..7 
 ";
+}
+else	
+{
+	print "1..0 # SKIP /usr/sbin/makemap not found
+";
+	exit 0;
+}
+
 my($test) = 1;
 
 # 1 load

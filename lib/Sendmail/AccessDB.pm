@@ -9,7 +9,7 @@ BEGIN {
 	use Exporter ();
 	use vars qw ($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS 
 		     $sub_regex_lock $DB_FILE);
-	$VERSION     = 1.03;
+	$VERSION     = 1.04;
 	@ISA         = qw (Exporter);
 	@EXPORT      = qw ();
 	@EXPORT_OK   = qw (spam_friend whitelisted lookup);
@@ -292,7 +292,7 @@ sub lookup
     
 
 
-sub _expand_ip : locked
+sub _expand_ip
 {
     my $address = shift;
     my @expanded = ();
@@ -311,7 +311,7 @@ sub _expand_ip : locked
     return @expanded;
 }
 
-sub _expand_hostname : locked
+sub _expand_hostname
 {
     my $hostname = shift;
     my @expanded = ($hostname);
@@ -323,7 +323,7 @@ sub _expand_hostname : locked
     return @expanded;
 } 
 
-sub _expand_email : locked
+sub _expand_email
 {
     my $address = shift;
     my @to_check = ($address);
@@ -351,9 +351,7 @@ These methods and functions are considered private and are intended for
 internal use by this module. They are B<not> considered part of the public
 interface and are described here for documentation purposes only.
 
-=head2 _expand_ip
-=head2 _expand_hostname
-=head2 _expand_address
+=head2 _expand_ip, _expand_hostname, _expand_address
 
  Usage     : @expanded = _expand_ip($ip); # For example
  Returns   : Given an ip, hostname, or e-mail address, it will expand
